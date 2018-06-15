@@ -8,7 +8,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -105,3 +104,8 @@ venv.bak/
 
 # xml data
 *.xml
+
+# data
+*.ttl
+*.csv
+*.txt
