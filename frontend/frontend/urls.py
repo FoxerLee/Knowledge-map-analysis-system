@@ -21,4 +21,5 @@ from ETL import views
 urlpatterns = [
     path(r'admin/', admin.site.urls),
     path(r'ETL/', views.index),
+    path(r'searchbyactor/', views.searchbyentity)
 ]
