@@ -21,4 +21,6 @@ from ETL import views
 urlpatterns = [
     path(r'admin/', admin.site.urls),
     path(r'ETL/', views.index),
+    path(r'ETL/upload1/', views.entity),
+    path(r'ETL/upload2/', views.relation)
 ]
