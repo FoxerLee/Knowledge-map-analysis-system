@@ -16,15 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from search import views
-import ETL
+from ETL.views import index, entity, relation
 
 
 urlpatterns = [
     path(r'admin/', admin.site.urls),
 
-    path(r'ETL/', ETL.views.index),
-    path(r'ETL/upload1/', ETL.views.entity),
-    path(r'ETL/upload2/', ETL.views.relation)
+    path(r'ETL/', index),
+    path(r'ETL/upload1/', entity),
+    path(r'ETL/upload2/', relation),
 
     path(r'search/', views.index),
     path(r'searchbyentity/', views.searchbyentity),
