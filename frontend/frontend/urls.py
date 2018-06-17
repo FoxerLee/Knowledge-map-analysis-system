@@ -15,12 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from ETL import views
+from search import views
+import ETL
 
 
 urlpatterns = [
     path(r'admin/', admin.site.urls),
-    path(r'ETL/', views.index),
-    path(r'ETL/upload1/', views.entity),
-    path(r'ETL/upload2/', views.relation)
+
+    path(r'ETL/', ETL.views.index),
+    path(r'ETL/upload1/', ETL.views.entity),
+    path(r'ETL/upload2/', ETL.views.relation)
+
+    path(r'search/', views.index),
+    path(r'searchbyentity/', views.searchbyentity),
+    path(r'search1/', views.search),
+    path(r'search2/', views.add),
 ]
