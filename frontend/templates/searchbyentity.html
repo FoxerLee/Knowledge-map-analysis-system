@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      {% load static %}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>组合查询 </title>
+
+    <!-- Bootstrap -->
+    <link href="{% static 'vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="{% static 'vendors/font-awesome/css/font-awesome.min.css'%}" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="{% static 'vendors/nprogress/nprogress.css' %}" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="{% static 'css/custom.min.css' %}" rel="stylesheet">
+  </head>
+
+  <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col menu_fixed">
+          <div class="left_col scroll-view">
+            <div class="navbar nav_title" style="border: 0;">
+              <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>喵喵电影</span></a>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <br />
+
+            <!-- sidebar menu -->
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+              <div class="menu_section">
+                <ul class="nav side-menu">
+                  <li><a href="dashboard.html"><i class="fa fa-home"></i> Dashboard </a>
+                  </li>
+                  <li><a><i class="fa fa-edit"></i> 查询 <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="searchbymoviename.html">按电影名称查询</a></li>
+                      <li><a href="searchbyactor.html">按演员名称查询</a></li>
+                      <li><a href="searchbydirector.html">按导演名称查询</a></li>
+                      <li><a href="searchbystyle.html">按风格查询</a></li>
+                      <li><a href="searchbytime.html">按上映时间查询</a></li>
+                      <li><a href="ETL.html">组合查询</a></li>
+                      <li><a href="searchdirectorstyle.html">查询导演风格</a></li>
+                      <li><a href="searchscore.html">查询电影评分</a></li>
+                      <li><a href="showByStyle.html">查询风格趋势</a></li>
+                      <li><a href="searchbinding.html">查询电影介质</a></li>
+                      <li><a href="searchstudio.html">查询发行商</a></li>
+                      <li><a href="searchlanguage.html">查询语言</a></li>
+                    </ul>
+                  </li>
+
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main" >
+          <div class="">
+            <div class="page-title">
+              <div class="title_left">
+                <h3>&nbsp;&nbsp;&nbsp;知识图谱搜索</h3>
+                <br/>
+              </div>
+            </div>
+
+
+              <div class="x_panel">
+
+              <div class="x_title">
+                <h2>查询维度</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <!-- start form for validation -->
+                <form  data-parsley-validate method="get" action="/search1">
+
+                  <label for="year">实体1:</label>
+                  <input type="text" id="year" class="form-control" name="entity1" placeholder="" width= 400px />
+                     <br/>
+
+                  <label for="hiveDirector">关系:</label>
+                  <input type="text" id="hiveDirector" class="form-control" name="relationship" placeholder="" width= 400px />
+                     <br/>
+
+                  <label for="actor">实体2:</label>
+                  <input type="text" id="actor" class="form-control" name="entity2" placeholder="" width= 400px />
+
+                  <br/>
+                    <input name="submit" type="submit" value="提交" />
+
+                </form>
+                <!-- end form for validations -->
+
+              </div>
+
+
+              </div>
+
+
+
+
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>关联跳数</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <!-- start form for validation -->
+                <div class="btn-group  btn-group-sm select-right">
+                  <button class="btn btn-default" type="button" ng-click="star_1()" >1跳</button>
+                  <button class="btn btn-default" type="button" ng-click="star_2()" >2跳</button>
+                  <button class="btn btn-default" type="button" ng-click="star_0()" >3跳</button>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="x_panel">
+              <div class="x_title">
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                    <ul class="dropdown-menu" role="menu">
+                      <li><a href="#">Settings 1</a>
+                      </li>
+                      <li><a href="#">Settings 2</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+
+                <div id="container" style="min-width:400px;height:400px"></div>
+
+              </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="row" >
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+
+                  <div class="x_content">
+
+                    <div class="x_title">
+                      <h2>查询列表</h2>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                          <th>查询总数</th>
+                          <th>查询时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                          <td>{{num}}</td>
+                          <td>{{time}}</td>
+                        </tr>
+                        </tbody>
+                      </table>
+                      <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                          <th>实体1</th>
+                          <th>关系</th>
+                          <th>实体2</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in data %}
+                        <tr>
+                          <td>{{i.e1}}</td>
+                          <td>{{i.re}}</td>
+                          <td>{{i.e2}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+        <!-- /page content -->
+        <!-- footer content -->
+        <footer>
+          <div class="pull-right">
+            喵喵电影 - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    {% load static %}
+    <script src="{% static 'vendors/jquery/dist/jquery.min.js' %}"></script>
+    <!-- Bootstrap -->
+    <script src="{% static 'vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static 'vendors/fastclick/lib/fastclick.js' %}"></script>
+    <!-- NProgress -->
+    <script src="{% static 'vendors/nprogress/nprogress.js' %}"></script>
+    
+    <!-- Custom Theme Scripts -->
+    <script src="{% static 'js/custom.min.js' %}"></script>
+    <!--<script src="https://img.hcharts.cn/highcharts/highcharts.js"></script>-->
+    <!--<script src="https://img.hcharts.cn/highcharts/modules/exporting.js"></script>-->
+    <!--<script src="https://img.hcharts.cn/highcharts/modules/oldie.js"></script>-->
+    <!--<script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>-->
+    <script src="{% static 'vendors/angular/angular-route.js' %}"></script>
+    <script src="{% static 'vendors/angular/angular.js' %}"></script>
+    <script src="{% static 'js/echarts.min.js' %}"></script>
+    <!--<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+    <script type="text/javascript"></script>-->
+    <script>
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    //var app = {{ data | safe }};
+    //console.log(app);
+    var graph = {{ graph | safe }};
+    option = null;
+    myChart.showLoading();
+
+    //console.log("a")
+    myChart.hideLoading();
+    //console.log("h")
+
+    //console.log("here")
+    //console.log(graph);
+    var categories = [];
+    for (var i = 0; i < 9; i++) {
+        categories[i] = {
+            name: '类目' + i
+        };
+    }
+    graph.nodes.forEach(function (node) {
+
+        node.itemStyle = null;
+        //node.value = node.symbolSize;
+        //node.symbolSize /= 1.5;
+        node.label = {
+            normal: {
+                show: node.symbolSize > 30
+            }
+        };
+
+        node.category = 0;
+        // Use random x, y
+        node.x = node.y = null;
+        node.draggable = true;
+        console.log(node);
+    });
+    option = {
+        title: {
+            text: 'Les Miserables',
+            subtext: 'Default layout',
+            top: 'bottom',
+            left: 'right'
+        },
+        tooltip: {},
+        legend: [{
+            // selectedMode: 'single',
+            data: categories.map(function (a) {
+                return a.name;
+            })
+        }],
+        animationDuration: 1500,
+        animationEasingUpdate: 'quinticInOut',
+        series : [
+            {
+                name: 'Les Miserables',
+                type: 'graph',
+                layout: 'force',
+                data: graph.nodes,
+                links: graph.links,
+                categories: categories,
+                roam: true,
+                focusNodeAdjacency: true,
+                itemStyle: {
+                    normal: {
+                        borderColor: '#fff',
+                        borderWidth: 1,
+                        shadowBlur: 10,
+                        shadowColor: 'rgba(0, 0, 0, 0.3)'
+                    }
+                },
+                label: {
+                    position: 'right',
+                    formatter: '{b}'
+                },
+                lineStyle: {
+                    color: 'source',
+                    curveness: 0.3
+                },
+                emphasis: {
+                    lineStyle: {
+                        width: 10
+                    }
+                },
+                force: {
+                    repulsion: 200
+                }
+            }
+        ]
+    };
+
+    myChart.setOption(option);
+    function eConsole(param) {
+        if (typeof param.seriesIndex === 'undefined') {
+            return;
+        }
+        if (param.type === 'click') {
+            everyClick(param); // 对应触发事件
+            }
+    }
+    myChart.on("click", eConsole);
+    function everyClick(param){
+        console.log(param.name);
+        $.get("/add/",{'name':param.name}, function(ret){
+            $('#result').html(ret)
+        })
+    }
+
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+    </script>
+
+  </body>
+</html>
