@@ -3,10 +3,14 @@ from py2neo import Graph,Node,Relationship
 from django.http import HttpResponse
 import json
 import random
+import redis
 import numpy as np
 
-# Create your views here.
-graph = Graph("bolt://localhost:7687", username="neo4j", password="123456")
+# 连接 neo4j
+graph = Graph("bolt://10.60.42.201:7687", username="neo4j", password="123456")
+# 连接 redis
+redis_con = redis.Redis(host='10.60.42.201', port=8089, decode_responses=True)
+
 # graph.delete_all()
 # test_node_1 = Node(label = "Person",name = "cc")
 # test_node_2 = Node(label = "Person",name = "bb")
@@ -38,9 +42,6 @@ graph = Graph("bolt://localhost:7687", username="neo4j", password="123456")
 
 
 # Create your views here.
-def index(request):
-    return render(request, 'ETL.html')
-
 
 def searchbyentity(request):
     return render(request, 'searchbyentity.html')
@@ -51,11 +52,12 @@ def chart(r):
     nodes = []
     links = []
     count = 0
-    for i in range(0,len(r)):
+    for i in range(0, len(r)):
 
-        style = {}
+        style = dict()
         style['normal'] = {}
-        l = {}
+        
+        l = dict()
         l['id'] = count
         l['name'] = r[i]['re']
         l['source'] = r[i]['e1']
@@ -79,20 +81,21 @@ def chart(r):
         node.append(n)
     result['nodes'] = node
     result['links'] = links
-    print(result)
+    # print(result)
     return result
 
 
 def add(request):
     name = request.GET.get('name')
-    data = graph.run(cypher="match({name:\"" + name + "\"})-[r]->(n) return r.type,n")
+    data = graph.run(cypher="match({name:\"" + name + "\"})-[r]->(n) return r.property,n")
     d = []
     result = data.data()
     length = len(result)
     for i in range(0, length):
-        r = {}
+        
+        r = dict()
         r['e1'] = name
-        r['re'] = result[i]['r.type']
+        r['re'] = result[i]['r.property']
         r['e2'] = result[i]['n']['name']
         d.append(r)
     print(d)
@@ -102,110 +105,245 @@ def add(request):
 
 def search(request):
     entity1 = request.GET.get('entity1')
-    # print(entity1)
-
+    entity2 = request.GET.get('entity2')
     relationship = request.GET.get('relationship')
 
-    entity2 = request.GET.get('entity2')
-    # print("e2", entity2)
+    # 待获取的参数
+    result = dict()
+    d = []
+    length = 0
 
     if entity1 != '' and entity2 != '' and relationship == '':
-        data = graph.run(cypher="match({name:\""+entity1+"\"})-[r]->({name:\""+entity2+"\"}) return r.type")
-        d = []
-        result = data.data()
-        length = len(result)
-        for i in range(0, length):
-            r = {}
-            r['e1'] = entity1
-            r['re'] = result[i]['r.type']
-            r['e2'] = entity2
-            d.append(r)
-        result = chart(d)
-        return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
+        # 针对 redis 中的 key 的存储格式：#_#_#
+        # 分别代表 En1 - Rel - En2
+        # 如果空则为 # 填充
+        key = entity1 + '_' + '#' + '_' + entity2
+
+        # 如果在 redis 里面存在缓存
+        if redis_con.hkeys(key) is not []:
+            print("From redis!")
+            result = eval(redis_con.hmget(key, 'result')[0])
+            d = eval(redis_con.hmget(key, 'd')[0])
+            length = eval(redis_con.hmget(key, 'length')[0])
+
+        else:
+            data = graph.run(cypher="match({name:\""+entity1+"\"})-[r]->({name:\""+entity2+"\"}) return r.property")
+    
+            result = data.data()
+            length = len(result)
+    
+            for i in range(0, length):
+                r = dict()
+                r['e1'] = entity1
+                r['re'] = result[i]['r.property']
+                r['e2'] = entity2
+                d.append(r)
+                result = chart(d)
+
+                # 不存在则写入 redis 缓存
+                print("Write to redis!")
+                redis_con.hmset(key, {'length': length, 'd': d, 'result': result})
+
+        # return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
+
     if entity1 != '' and entity2 == '' and relationship == '':
-        data = graph.run(cypher="match({name:\"" + entity1 + "\"})-[r]->(n) return r.type,n")
-        d = []
-        result = data.data()
-        length = len(result)
-        for i in range(0, length):
-            r = {}
-            r['e1'] = entity1
-            r['re'] = result[i]['r.type']
-            r['e2'] = result[i]['n']['name']
-            d.append(r)
-        print(d)
-        result = chart(d)
-        return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
+        # 针对 redis 中的 key 的存储格式：#_#_#
+        # 分别代表 En1 - Rel - En2
+        # 如果空则为 # 填充
+        key = entity1 + '_' + '#' + '_' + '#'
+
+        # 如果在 redis 里面存在缓存
+        if redis_con.hkeys(key) is not []:
+            print("From redis!")
+            result = eval(redis_con.hmget(key, 'result')[0])
+            d = eval(redis_con.hmget(key, 'd')[0])
+            length = eval(redis_con.hmget(key, 'length')[0])
+
+        else:
+            data = graph.run(cypher="match({name:\"" + entity1 + "\"})-[r]->(n) return r.property,n")
+
+            result = data.data()
+            length = len(result)
+            for i in range(0, length):
+                r = dict()
+                r['e1'] = entity1
+                r['re'] = result[i]['r.property']
+                r['e2'] = result[i]['n']['name']
+                d.append(r)
+
+            result = chart(d)
+
+            # 不存在则写入 redis 缓存
+            print("Write to redis!")
+            redis_con.hmset(key, {'length': length, 'd': d, 'result': result})
+        # return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
+    
     if entity1 == '' and entity2 != '' and relationship == '':
-        data = graph.run(cypher="match(n)-[r]->({name:\"" + entity2 + "\"}) return r.type,n")
-        d = []
-        result = data.data()
-        length = len(result)
-        for i in range(0, length):
-            r = {}
-            r['e1'] = result[i]['n']['name']
-            r['re'] = result[i]['r.type']
-            r['e2'] = entity2
-            d.append(r)
-        print(d)
-        result = chart(d)
-        return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
+        # 针对 redis 中的 key 的存储格式：#_#_#
+        # 分别代表 En1 - Rel - En2
+        # 如果空则为 # 填充
+        key = '#' + '_' + '#' + '_' + entity2
+
+        # 如果在 redis 里面存在缓存
+        if redis_con.hkeys(key) is not []:
+            print("From redis!")
+            result = eval(redis_con.hmget(key, 'result')[0])
+            d = eval(redis_con.hmget(key, 'd')[0])
+            length = eval(redis_con.hmget(key, 'length')[0])
+
+        else:
+            data = graph.run(cypher="match(n)-[r]->({name:\"" + entity2 + "\"}) return r.property,n")
+            # d = []
+            result = data.data()
+            length = len(result)
+            for i in range(0, length):
+                r = dict()
+                r['e1'] = result[i]['n']['name']
+                r['re'] = result[i]['r.property']
+                r['e2'] = entity2
+                d.append(r)
+            
+            result = chart(d)
+
+            # 不存在则写入 redis 缓存
+            print("Write to redis!")
+            redis_con.hmset(key, {'length': length, 'd': d, 'result': result})
+            
+        # return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
+    
     if entity1 != '' and entity2 == '' and relationship != '':
-        data = graph.run(cypher="match({name:\"" + entity1 + "\"})-[{type:\""+relationship+"\"}]->(n) return n")
-        d = []
-        result = data.data()
-        length = len(result)
-        for i in range(0, length):
-            r = {}
-            r['e1'] = entity1
-            r['re'] = relationship
-            r['e2'] = result[i]['n']['name']
-            d.append(r)
-        print(d)
-        result = chart(d)
-        return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
+        # 针对 redis 中的 key 的存储格式：#_#_#
+        # 分别代表 En1 - Rel - En2
+        # 如果空则为 # 填充
+        key = entity1 + '_' + relationship + '_' + '#'
+
+        # 如果在 redis 里面存在缓存
+        if redis_con.hkeys(key) is not []:
+            print("From redis!")
+            result = eval(redis_con.hmget(key, 'result')[0])
+            d = eval(redis_con.hmget(key, 'd')[0])
+            length = eval(redis_con.hmget(key, 'length')[0])
+
+        else:
+            data = graph.run(cypher="match({name:\"" + entity1 + "\"})-[{type:\""+relationship+"\"}]->(n) return n")
+            
+            result = data.data()
+            length = len(result)
+            for i in range(0, length):
+                r = dict()
+                r['e1'] = entity1
+                r['re'] = relationship
+                r['e2'] = result[i]['n']['name']
+                d.append(r)
+            
+            result = chart(d)
+    
+            # 不存在则写入 redis 缓存
+            print("Write to redis!")
+            redis_con.hmset(key, {'length': length, 'd': d, 'result': result})
+            
+        # return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
+    
     if entity1 == '' and entity2 != '' and relationship != '':
-        data = graph.run(cypher="match(n)-[{type:\""+relationship+"\"}]->({name:\"" + entity2 + "\"}) return n")
-        d = []
-        result = data.data()
-        length = len(result)
-        for i in range(0, length):
-            r = {}
-            r['e1'] = result[i]['n']['name']
-            r['re'] = relationship
-            r['e2'] = entity2
-            d.append(r)
-        print(d)
-        result = chart(d)
-        return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
+        # 针对 redis 中的 key 的存储格式：#_#_#
+        # 分别代表 En1 - Rel - En2
+        # 如果空则为 # 填充
+        key = '#' + '_' + relationship + '_' + entity2
+
+        # 如果在 redis 里面存在缓存
+        if redis_con.hkeys(key) is not []:
+            print("From redis!")
+            result = eval(redis_con.hmget(key, 'result')[0])
+            d = eval(redis_con.hmget(key, 'd')[0])
+            length = eval(redis_con.hmget(key, 'length')[0])
+
+        else:
+            
+            data = graph.run(cypher="match(n)-[{type:\""+relationship+"\"}]->({name:\"" + entity2 + "\"}) return n")
+            # d = []
+            result = data.data()
+            length = len(result)
+            for i in range(0, length):
+                r = dict()
+                r['e1'] = result[i]['n']['name']
+                r['re'] = relationship
+                r['e2'] = entity2
+                d.append(r)
+            
+            result = chart(d)
+            
+            # 不存在则写入 redis 缓存
+            print("Write to redis!")
+            redis_con.hmset(key, {'length': length, 'd': d, 'result': result})
+            
+        # return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
+    
     if entity1 != '' and entity2 != '' and relationship != '':
-        data = graph.run(cypher="match({name:\"" + entity1 + "\"})-[{type:\""+relationship+"\"}]->(n{name:\"" + entity2 + "\"}) return n")
-        d = []
-        result = data.data()
-        length = len(result)
-        for i in range(0, length):
-            r = {}
-            r['e1'] = entity1
-            r['re'] = relationship
-            r['e2'] = entity2
-            d.append(r)
-        print(d)
-        result = chart(d)
-        return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
+        # 针对 redis 中的 key 的存储格式：#_#_#
+        # 分别代表 En1 - Rel - En2
+        # 如果空则为 # 填充
+        key = entity1 + '_' + relationship + '_' + entity2
+
+        # 如果在 redis 里面存在缓存
+        if redis_con.hkeys(key) is not []:
+            print("From redis!")
+            result = eval(redis_con.hmget(key, 'result')[0])
+            d = eval(redis_con.hmget(key, 'd')[0])
+            length = eval(redis_con.hmget(key, 'length')[0])
+
+        else:
+        
+            data = graph.run(cypher="match({name:\"" + entity1 + "\"})-[{type:\""+relationship+"\"}]->(n{name:\"" + entity2 + "\"}) return n")
+            # d = []
+            result = data.data()
+            length = len(result)
+            for i in range(0, length):
+                r = dict()
+                r['e1'] = entity1
+                r['re'] = relationship
+                r['e2'] = entity2
+                d.append(r)
+            
+            result = chart(d)
+
+            # 不存在则写入 redis 缓存
+            print("Write to redis!")
+            redis_con.hmset(key, {'length': length, 'd': d, 'result': result})
+        # return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
+    
     if entity1 == '' and entity2 == ''and relationship != '':
-        data = graph.run(cypher="match(m)-[{type:\""+relationship+"\"}]->(n) return m,n")
-        d = []
-        result = data.data()
-        length = len(result)
-        for i in range(0, length):
-            r = {}
-            r['e1'] = result[i]['m']['name']
-            r['re'] = relationship
-            r['e2'] = result[i]['n']['name']
-            d.append(r)
-        print(d)
-        result = chart(d)
-        return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
+        # 针对 redis 中的 key 的存储格式：#_#_#
+        # 分别代表 En1 - Rel - En2
+        # 如果空则为 # 填充
+        key = '#' + '_' + relationship + '_' + '#'
+
+        # 如果在 redis 里面存在缓存
+        if redis_con.hkeys(key) is not []:
+            print("From redis!")
+            result = eval(redis_con.hmget(key, 'result')[0])
+            d = eval(redis_con.hmget(key, 'd')[0])
+            length = eval(redis_con.hmget(key, 'length')[0])
+
+        else:
+            
+            data = graph.run(cypher="match(m)-[{type:\""+relationship+"\"}]->(n) return m,n")
+            # d = []
+            result = data.data()
+            length = len(result)
+            for i in range(0, length):
+                r = dict()
+                r['e1'] = result[i]['m']['name']
+                r['re'] = relationship
+                r['e2'] = result[i]['n']['name']
+                d.append(r)
+           
+            result = chart(d)
+    
+            # 不存在则写入 redis 缓存
+            print("Write to redis!")
+            redis_con.hmset(key, {'length': length, 'd': d, 'result': result})
+
+    return render(request, 'searchbyentity.html', {'data': d, 'num': length, 'graph': json.dumps(result)})
 
 
 
