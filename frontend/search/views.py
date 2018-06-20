@@ -120,7 +120,7 @@ def search(request):
         key = entity1 + '_' + '#' + '_' + entity2
 
         # 如果在 redis 里面存在缓存
-        if redis_con.hkeys(key) is not []:
+        if redis_con.hkeys(key):
             print("From redis!")
             result = eval(redis_con.hmget(key, 'result')[0])
             d = eval(redis_con.hmget(key, 'd')[0])
@@ -153,7 +153,8 @@ def search(request):
         key = entity1 + '_' + '#' + '_' + '#'
 
         # 如果在 redis 里面存在缓存
-        if redis_con.hkeys(key) is not []:
+        if redis_con.hkeys(key):
+            print(redis_con.hkeys(key))
             print("From redis!")
             result = eval(redis_con.hmget(key, 'result')[0])
             d = eval(redis_con.hmget(key, 'd')[0])
@@ -185,7 +186,7 @@ def search(request):
         key = '#' + '_' + '#' + '_' + entity2
 
         # 如果在 redis 里面存在缓存
-        if redis_con.hkeys(key) is not []:
+        if redis_con.hkeys(key):
             print("From redis!")
             result = eval(redis_con.hmget(key, 'result')[0])
             d = eval(redis_con.hmget(key, 'd')[0])
@@ -218,7 +219,7 @@ def search(request):
         key = entity1 + '_' + relationship + '_' + '#'
 
         # 如果在 redis 里面存在缓存
-        if redis_con.hkeys(key) is not []:
+        if redis_con.hkeys(key):
             print("From redis!")
             result = eval(redis_con.hmget(key, 'result')[0])
             d = eval(redis_con.hmget(key, 'd')[0])
@@ -251,7 +252,7 @@ def search(request):
         key = '#' + '_' + relationship + '_' + entity2
 
         # 如果在 redis 里面存在缓存
-        if redis_con.hkeys(key) is not []:
+        if redis_con.hkeys(key):
             print("From redis!")
             result = eval(redis_con.hmget(key, 'result')[0])
             d = eval(redis_con.hmget(key, 'd')[0])
@@ -285,7 +286,7 @@ def search(request):
         key = entity1 + '_' + relationship + '_' + entity2
 
         # 如果在 redis 里面存在缓存
-        if redis_con.hkeys(key) is not []:
+        if redis_con.hkeys(key):
             print("From redis!")
             result = eval(redis_con.hmget(key, 'result')[0])
             d = eval(redis_con.hmget(key, 'd')[0])
@@ -318,7 +319,7 @@ def search(request):
         key = '#' + '_' + relationship + '_' + '#'
 
         # 如果在 redis 里面存在缓存
-        if redis_con.hkeys(key) is not []:
+        if redis_con.hkeys(key):
             print("From redis!")
             result = eval(redis_con.hmget(key, 'result')[0])
             d = eval(redis_con.hmget(key, 'd')[0])
