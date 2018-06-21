@@ -110,7 +110,9 @@ venv.bak/
 *.csv
 *.txt
 
-
 script/
-*.iml
 data/
+
+# log
+*.iml
+
