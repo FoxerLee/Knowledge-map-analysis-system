@@ -109,3 +109,8 @@ venv.bak/
 *.ttl
 *.csv
 *.txt
+
+
+script/
+*.iml
+data/
