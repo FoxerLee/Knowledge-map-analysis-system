@@ -112,7 +112,7 @@ venv.bak/
 
 script/
 data/
-
+!frontend/static/vendors/jquery/src/data/Data.js
 # log
 *.iml
 
