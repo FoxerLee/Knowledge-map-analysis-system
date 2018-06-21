@@ -18,6 +18,7 @@
     <link href="{% static 'vendors/nprogress/nprogress.css' %}" rel="stylesheet">
 
     <!-- Custom Theme Style -->
+    <link href="{% static 'css/Hypertree.css' %}" rel="stylesheet">
     <link href="{% static 'css/custom.min.css' %}" rel="stylesheet">
   </head>
 
@@ -92,9 +93,7 @@
                   <input type="text" id="year" class="form-control" name="entity1" placeholder="" width= 400px />
                      <br/>
 
-                  <label for="hiveDirector">关系:</label>
-                  <input type="text" id="hiveDirector" class="form-control" name="relationship" placeholder="" width= 400px />
-                     <br/>
+
 
                   <label for="actor">实体2:</label>
                   <input type="text" id="actor" class="form-control" name="entity2" placeholder="" width= 400px />
@@ -113,11 +112,41 @@
 
 
 
+            <!--<div class="x_panel">-->
+              <!--<div class="x_title">-->
+                <!--<h2>关联跳数</h2>-->
+                <!--<ul class="nav navbar-right panel_toolbox">-->
+                  <!--<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>-->
+                  <!--</li>-->
+                  <!--<li><a class="close-link"><i class="fa fa-close"></i></a>-->
+                  <!--</li>-->
+                <!--</ul>-->
+                <!--<div class="clearfix"></div>-->
+              <!--</div>-->
+              <!--<div class="x_content">-->
+                <!--&lt;!&ndash; start form for validation &ndash;&gt;-->
+                <!--<div class="btn-group  btn-group-sm select-right">-->
+                  <!--<button class="btn btn-default" type="button" ng-click="star_1()" >1跳</button>-->
+                  <!--<button class="btn btn-default" type="button" ng-click="star_2()" >2跳</button>-->
+                  <!--<button class="btn btn-default" type="button" ng-click="star_0()" >3跳</button>-->
+                <!--</div>-->
+
+              <!--</div>-->
+            <!--</div>-->
+
             <div class="x_panel">
               <div class="x_title">
-                <h2>关联跳数</h2>
                 <ul class="nav navbar-right panel_toolbox">
                   <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                    <ul class="dropdown-menu" role="menu">
+                      <li><a href="#">Settings 1</a>
+                      </li>
+                      <li><a href="#">Settings 2</a>
+                      </li>
+                    </ul>
                   </li>
                   <li><a class="close-link"><i class="fa fa-close"></i></a>
                   </li>
@@ -125,12 +154,8 @@
                 <div class="clearfix"></div>
               </div>
               <div class="x_content">
-                <!-- start form for validation -->
-                <div class="btn-group  btn-group-sm select-right">
-                  <button class="btn btn-default" type="button" ng-click="star_1()" >1跳</button>
-                  <button class="btn btn-default" type="button" ng-click="star_2()" >2跳</button>
-                  <button class="btn btn-default" type="button" ng-click="star_0()" >3跳</button>
-                </div>
+
+                <div id="infovis" style="min-width:400px;height:800px"></div>
 
               </div>
             </div>
@@ -156,7 +181,7 @@
               </div>
               <div class="x_content">
 
-                <div id="container" style="min-width:400px;height:400px"></div>
+                <div id="container2" style="min-width:400px;height:1000px"></div>
 
               </div>
             </div>
@@ -247,6 +272,7 @@
     <script src="{% static 'vendors/angular/angular-route.js' %}"></script>
     <script src="{% static 'vendors/angular/angular.js' %}"></script>
     <script src="{% static 'js/echarts.min.js' %}"></script>
+    <script src="{% static 'js/jit.js' %}"></script>
     <!--<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
     <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
     <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
@@ -258,117 +284,145 @@
     <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
     <script type="text/javascript"></script>-->
     <script>
-    var dom = document.getElementById("container");
-    var myChart = echarts.init(dom);
-    //var app = {{ data | safe }};
-    //console.log(app);
-    var graph = {{ graph | safe }};
-    option = null;
-    myChart.showLoading();
 
-    //console.log("a")
-    myChart.hideLoading();
-    //console.log("h")
 
-    //console.log("here")
-    //console.log(graph);
-    var categories = [];
-    for (var i = 0; i < 9; i++) {
-        categories[i] = {
-            name: '类目' + i
-        };
-    }
-    graph.nodes.forEach(function (node) {
+    init();
 
-        node.itemStyle = null;
-        //node.value = node.symbolSize;
-        //node.symbolSize /= 1.5;
-        node.label = {
-            normal: {
-                show: node.symbolSize > 30
-            }
-        };
+    function init() {
+        //init data
+        var json = {{ graph | safe }};
+        //end
+        var infovis = document.getElementById('infovis');
+        var w = infovis.offsetWidth - 50, h = infovis.offsetHeight - 50;
+        //console.log(w, h);
 
-        node.category = 0;
-        // Use random x, y
-        node.x = node.y = null;
-        node.draggable = true;
-        console.log(node);
-    });
-    option = {
-        title: {
-            text: 'Les Miserables',
-            subtext: 'Default layout',
-            top: 'bottom',
-            left: 'right'
+        //init Hypertree
+        var ht = new $jit.Hypertree({
+            //id of the visualization container
+            injectInto: 'infovis',
+            //canvas width and height
+            width: w,
+            height: h,
+            //Change node and edge styles such as
+            //color, width and dimensions.
+            Node: {
+                dim: 9,
+                color: "#1a487a"
+            },
+            Edge: {
+                lineWidth: 2,
+                color: "#8cb6bf"
+            },
+
+        //Attach event handlers and add text to the
+        //labels. This method is only triggered on label
+        //creation
+        onCreateLabel: function (domElement, node) {
+            domElement.innerHTML = node.name;
+            $jit.util.addEvent(domElement, 'click', function () {
+                ht.onClick(node.id, {
+                    onComplete: function () {
+                        ht.controller.onComplete();
+                    }
+                });
+            });
         },
-        tooltip: {},
-        legend: [{
-            // selectedMode: 'single',
-            data: categories.map(function (a) {
-                return a.name;
-            })
-        }],
-        animationDuration: 1500,
-        animationEasingUpdate: 'quinticInOut',
-        series : [
-            {
-                name: 'Les Miserables',
-                type: 'graph',
-                layout: 'force',
-                data: graph.nodes,
-                links: graph.links,
-                categories: categories,
-                roam: true,
-                focusNodeAdjacency: true,
-                itemStyle: {
-                    normal: {
-                        borderColor: '#fff',
-                        borderWidth: 1,
-                        shadowBlur: 10,
-                        shadowColor: 'rgba(0, 0, 0, 0.3)'
-                    }
-                },
-                label: {
-                    position: 'right',
-                    formatter: '{b}'
-                },
-                lineStyle: {
-                    color: 'source',
-                    curveness: 0.3
-                },
-                emphasis: {
-                    lineStyle: {
-                        width: 10
-                    }
-                },
-                force: {
-                    repulsion: 200
-                }
-            }
-        ]
-    };
+        //Change node styles when labels are placed
+        //or moved.
+        onPlaceLabel: function (domElement, node) {
+            var style = domElement.style;
+            style.display = '';
+            style.cursor = 'pointer';
+            if (node._depth === 0) {
+                style.fontSize = "2.0em";
+                style.color = "#101010";
 
-    myChart.setOption(option);
+            } else if (node._depth === 2 || node._depth === 1) {
+                style.fontSize = "0.7em";
+                style.color = "#555";
+
+            } else {
+                style.display = 'none';
+            }
+
+            var left = parseInt(style.left);
+            var w = domElement.offsetWidth;
+            style.left = (left - w / 2) + 'px';
+        },
+
+
+                    });
+        //load JSON data.
+        ht.loadJSON(json);
+        //compute positions and plot.
+        ht.refresh();
+        //end
+        ht.controller.onComplete();
+    }
+
+    var dom2 = document.getElementById("container2");
+    var myChart2 = echarts.init(dom2);
+    var app2 = {};
+    option = null;
+    var d = {{ graph2 | safe }};
+    console.log(typeof(d));
+    option = {
+        visualMap: {
+            type: 'continuous',
+            min: 0,
+            max: 10,
+            inRange: {
+                color: ['#2D5F73', '#538EA6', '#F2D1B3', '#F2B8A2', '#F28C8C']
+            }
+        },
+        series: {
+            type: 'sunburst',
+            data: d['result'],
+            radius: ['10%', '95%'],
+            label: {
+                rotate: 'radial'
+            }
+        }
+    };
     function eConsole(param) {
         if (typeof param.seriesIndex === 'undefined') {
             return;
         }
         if (param.type === 'click') {
             everyClick(param); // 对应触发事件
-            }
+        }
     }
-    myChart.on("click", eConsole);
+    myChart2.on("click", eConsole);
     function everyClick(param){
         console.log(param.name);
-        $.get("/add/",{'name':param.name}, function(ret){
-            $('#result').html(ret)
+        $.get("/search2",{'name':param.name}, function(ret){
+            console.log(typeof(ret));
+            option = {
+                visualMap: {
+                    type: 'continuous',
+                    min: 0,
+                    max: 10,
+                    inRange: {
+                        color: ['#2D5F73', '#538EA6', '#F2D1B3', '#F2B8A2', '#F28C8C']
+                    }
+                },
+                series: {
+                    type: 'sunburst',
+                    data: ret['result'],
+                    radius: ['10%', '95%'],
+                    label: {
+                        rotate: 'radial'
+                    }
+                }
+            };
+            myChart2.setOption(option, true);
         })
     }
 
     if (option && typeof option === "object") {
-        myChart.setOption(option, true);
+        myChart2.setOption(option, true);
     }
+
     </script>
 
   </body>
