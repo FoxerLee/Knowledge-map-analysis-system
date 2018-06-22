@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from py2neo import Graph, Node, Relationship
 from django.http import HttpResponse, JsonResponse
+
 import json
 import random
 import redis
+import re
+
 import numpy as np
 
 # 连接 neo4j
@@ -41,10 +44,37 @@ redis_con = redis.Redis(host='10.60.42.201', port=8089, decode_responses=True)
 # def search():
 
 
+def fuzzyfinder(user_input, collection):
+    suggestions = []
+    pattern = '.*?'.join(user_input)  # Converts 'djm' to 'd.*?j.*?m'
+    regex = re.compile(pattern)  # Compiles a regex.
+    for item in collection:
+        match = regex.search(item)  # Checks if the current item matches the regex.
+        if match:
+            suggestions.append((len(match.group()), match.start(), item))
+    return [x for _, _, x in sorted(suggestions)]
+
 # Create your views here.
 
+
 def searchbyentity(request):
+
     return render(request, 'searchbyentity.html')
+
+
+def fsearch(request):
+    q = request.GET['entity1']
+    with open("static/entity1.json", 'r') as load_f:
+        load_dict = json.load(load_f)
+    relist = fuzzyfinder(q, load_dict["entity1"])
+
+    rejson = dict()
+    if len(relist) > 10:
+        rejson["res"] = relist[:10]
+    else:
+        rejson["res"] = relist
+
+    return JsonResponse(rejson)
 
 
 def chart(r, t):
@@ -233,6 +263,9 @@ def search(request):
             d = eval(redis_con.hmget(key, 'd')[0])
             length = eval(redis_con.hmget(key, 'length')[0])
 
+            # tmp = redis_con.get(entity1)
+            # redis_con.set(entity1, tmp+1)
+
         else:
             data = graph.run(cypher="match({name:\"" + entity1 + "\"})-[r]->(n) return r.property,n")
 
@@ -248,6 +281,7 @@ def search(request):
             # 不存在则写入 redis 缓存
             print("Write to redis!")
             redis_con.hmset(key, {'length': length, 'd': d})
+            # redis_con.set(entity1, 1)
 
         result = chart(d, type)
         result2 = chart2(d, type)
@@ -268,6 +302,9 @@ def search(request):
             d = eval(redis_con.hmget(key, 'd')[0])
             length = eval(redis_con.hmget(key, 'length')[0])
 
+            # tmp = redis_con.get(entity1)
+            # redis_con.set(entity2, tmp + 1)
+
         else:
             data = graph.run(cypher="match(n)-[r]->({name:\"" + entity2 + "\"}) return r.property,n")
             # d = []
@@ -282,7 +319,8 @@ def search(request):
 
             # 不存在则写入 redis 缓存
             print("Write to redis!")
-            redis_con.hmset(key, {'length': length, 'd': d, 'result': result})
+            redis_con.hmset(key, {'length': length, 'd': d})
+            # redis_con.set(entity2, 1)
             
         result = chart(d, type)
         result2 = chart2(d, type)

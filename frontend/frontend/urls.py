@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from search.views import searchbyentity, search, add
+from search.views import searchbyentity, search, add, fsearch
 from ETL.views import index, entity, relation
 
 
@@ -30,4 +30,5 @@ urlpatterns = [
     path(r'search/', searchbyentity),
     path(r'search1/', search),
     path(r'search2/', add),
+    path(r'fsearch/', fsearch)
 ]

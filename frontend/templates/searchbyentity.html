@@ -20,6 +20,8 @@
     <!-- Custom Theme Style -->
     <link href="{% static 'css/Hypertree.css' %}" rel="stylesheet">
     <link href="{% static 'css/custom.min.css' %}" rel="stylesheet">
+
+      <link href="{% static 'css/search.css' %}" rel="stylesheet">
   </head>
 
   <body class="nav-md">
@@ -90,16 +92,24 @@
                 <form  data-parsley-validate method="get" action="/search1">
 
                   <label for="year">实体1:</label>
-                  <input type="text" id="year" class="form-control" name="entity1" placeholder="" width= 400px />
+                    <div class="search-input">
+                  <input type="text" id="entity1" class="form-control" name="entity1" autocomplete="off" placeholder="" width= 400px />
+                        <div id="wordHint"></div>
+                    </div>
+                    </div>
                      <br/>
 
 
 
                   <label for="actor">实体2:</label>
-                  <input type="text" id="actor" class="form-control" name="entity2" placeholder="" width= 400px />
-
+                  <div class="search-input">
+                  <input type="text" id="entity2" class="form-control" name="entity2" autocomplete="off" placeholder="" width= 400px />
+                    <div id="wordHint2"></div>
+                    </div>
                   <br/>
-                    <input name="submit" type="submit" value="提交" />
+                  <span class="input-group-append" >
+                    <button class="btn btn-primary" type="submit"> 提交</button>
+                  </span>
 
                 </form>
                 <!-- end form for validations -->
@@ -284,6 +294,99 @@
     <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
     <script type="text/javascript"></script>-->
     <script>
+        var len = 0;
+        $("#entity1").keyup(function(){
+            var q = $("#entity1").val();
+            if (q.length !== len) {
+                $.get('/fsearch/', {'entity1': q}, function (data) {
+                    console.log(data["res"]);
+                    $("#wordHint").empty().css("border", "1px solid #fff");
+                    for (var i = 0; i < data["res"].length; i++) {
+                        $("#wordHint").append(
+                                "<div class=\"hintItem\">"
+                                + "<span class=\"hintItem_t\" title=\""+ data["res"][i] +" "
+                                + "onclick=\"oc1\" onmousemove=\"mo1\" \">" + data["res"][i] + "</span>"
+                                + "</div>");
+                    }
+
+
+                });
+                len = q.length;
+            }
+
+        });
+        $('#entity1').keydown(function(){
+            $("#entity1").empty();
+            $("#wordHint").empty().css("border", "1px solid #fff");
+            len = 0;
+        });
+        $('#entity1').blur(function(){
+            $("#entity1").empty();
+            $("#wordHint").empty().css("border", "1px solid #fff");
+            len = 0;
+        });
+
+        // 点击显示到输入框
+          function oc1() {
+            $("#entity1").val($(this).children(".hintItem_t").text());
+          }
+          // 鼠标移入
+          function mo1() {
+            $("#entity1").val($(this).children(".hintItem_t").text());
+          }
+
+
+
+    </script>
+
+        <script>
+        var len = 0;
+        $("#entity2").keyup(function(){
+            var q = $("#entity2").val();
+            if (q.length !== len) {
+                $.get('/fsearch/', {'entity1': q}, function (data) {
+                    console.log(data["res"]);
+                    $("#wordHint2").empty().css("border", "1px solid #fff");
+                    for (var i = 0; i < data["res"].length; i++) {
+                        $("#wordHint2").append(
+                                "<div class=\"hintItem\">"
+                                + "<span class=\"hintItem_t\" title=\""+ data["res"][i] +" "
+                                + "onclick=\"oc2\" onmousemove=\"mo2\" \">" + data["res"][i] + "</span>"
+                                + "</div>");
+                    }
+
+
+                });
+                len = q.length;
+            }
+
+        });
+        $('#entity2').keydown(function(){
+            $("#entity2").empty();
+            $("#wordHint2").empty().css("border", "1px solid #fff");
+            len = 0;
+        });
+        $('#entity2').blur(function(){
+            $("#entity2").empty();
+            $("#wordHint2").empty().css("border", "1px solid #fff");
+            len = 0;
+        });
+
+        // 点击显示到输入框
+          function oc2() {
+            $("#entity2").val($(this).children(".hintItem_t").text());
+          }
+          // 鼠标移入
+          function mo2() {
+            $("#entity2").val($(this).children(".hintItem_t").text());
+          }
+
+
+
+    </script>
+
+    <script>
+
 
 
     init();

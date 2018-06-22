@@ -1,0 +1,42 @@
+/*#search-form {*/
+	/*width: 60%;*/
+	/*max-width: 500px;*/
+	/*margin: 2em auto;*/
+/*}*/
+
+/*#entity1, #entity2 {*/
+	/*width: 100%;*/
+	/*font-size: 1em;*/
+	/*padding: .5em;*/
+	/*line-height: 1em;*/
+/*}*/
+
+
+
+/*#wordHint {*/
+	/*position: absolute;*/
+	/*width: 20em;*/
+	/*top: 2.5em;*/
+	/*left: 0;*/
+	/*border: 1px solid #fff;*/
+/*}*/
+
+.hintItem {
+	padding: .25em .5em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.hintItem:hover{
+	cursor: pointer;
+	background:#eee;
+}
+
+.hintItem_t {
+	margin-left: 1em;
+	color: #999;
+
+}
+.hover{
+	background: #eee;
+}
