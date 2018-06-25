@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>单一查询 </title>
+    <title>组合查询 </title>
 
     <!-- Bootstrap -->
     <link href="{% static 'vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -20,7 +20,6 @@
     <!-- Custom Theme Style -->
     <link href="{% static 'css/Hypertree.css' %}" rel="stylesheet">
     <link href="{% static 'css/custom.min.css' %}" rel="stylesheet">
-      <link href="{% static 'css/search.css' %}" rel="stylesheet">
   </head>
 
   <body class="nav-md">
@@ -38,19 +37,19 @@
 
             <!-- sidebar menu -->
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-                <div class="menu_section">
-                    <ul class="nav side-menu">
-                        <li><a href="/dashboard"><i class="fa fa-home"></i> Dashboard </a></li>
-                        <li><a><i class="fa fa-edit"></i> 查询 <span class="fa fa-chevron-down"></span></a>
-                            <ul class="nav child_menu">
-                                <li><a href="/search">查询实体</a></li>
-                                <li><a href="/searchbytwoentities">查询实体间关系</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="/ETL"><i class="fa fa-archive"></i> ETL </a></li>
-                        
+              <div class="menu_section">
+                <ul class="nav side-menu">
+                  <li><a href="/dashboard"><i class="fa fa-home"></i> Dashboard </a></li>
+                    <li><a><i class="fa fa-edit"></i> 查询 <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="/search">查询实体</a></li>
+                      <li><a href="/searchbytwoentities">查询实体间关系</a></li>
                     </ul>
-                </div>
+                  </li>
+                    <li><a href="/ETL"><i class="fa fa-archive"></i> ETL </a></li>
+
+                </ul>
+              </div>
             </div>
 
           </div>
@@ -93,26 +92,24 @@
               </div>
               <div class="x_content">
                 <!-- start form for validation -->
-                <form  data-parsley-validate method="get" action="/search1">
-                    <label for="year">注意！请只输入一种实体即可，两种实体间的关系查询请前往 查询实体间关系 页面</label>
-                    <br/>
+                <form  data-parsley-validate method="get" action="/search3">
+
                   <label for="year">主语实体:</label>
                     <div class="search-input">
                   <input type="text" id="entity1" class="form-control" name="entity1" autocomplete="off" placeholder="" width= 400px />
-                        <div id="wordHint"></div>
+                    <div id="wordHint"></div>
                     </div>
-
                      <br/>
 
 
 
                   <label for="actor">宾语实体:</label>
-                  <div class="search-input">
+                        <div class="search-input">
                   <input type="text" id="entity2" class="form-control" name="entity2" autocomplete="off" placeholder="" width= 400px />
-                    <div id="wordHint2"></div>
-                    </div>
+                        <div id="wordHint"></div>
+                        </div>
                   <br/>
-                  <span class="input-group-append" >
+                    <span class="input-group-append" >
                     <button class="btn btn-primary" type="submit"> 提交</button>
                   </span>
 
@@ -149,9 +146,35 @@
               <!--</div>-->
             <!--</div>-->
 
+{#            <div class="x_panel">#}
+{#              <div class="x_title">#}
+{#                <ul class="nav navbar-right panel_toolbox">#}
+{#                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>#}
+{#                  </li>#}
+{#                  <li class="dropdown">#}
+{#                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>#}
+{#                    <ul class="dropdown-menu" role="menu">#}
+{#                      <li><a href="#">Settings 1</a>#}
+{#                      </li>#}
+{#                      <li><a href="#">Settings 2</a>#}
+{#                      </li>#}
+{#                    </ul>#}
+{#                  </li>#}
+{#                  <li><a class="close-link"><i class="fa fa-close"></i></a>#}
+{#                  </li>#}
+{#                </ul>#}
+{#                <div class="clearfix"></div>#}
+{#              </div>#}
+{#              <div class="x_content">#}
+{##}
+{#                <div id="infovis" style="min-width:400px;height:800px"></div>#}
+{##}
+{#              </div>#}
+{#            </div>#}
+
             <div class="x_panel">
               <div class="x_title">
-                  <h2>单一实体关系图</h2>
+                  <h2>实体间关系图</h2>
                 <ul class="nav navbar-right panel_toolbox">
                   <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                   </li>
@@ -163,26 +186,7 @@
               </div>
               <div class="x_content">
 
-                <div id="infovis" style="min-width:400px;height:800px"></div>
-
-              </div>
-            </div>
-
-            <div class="x_panel">
-              <div class="x_title">
-                  <h2>实体关系延伸图</h2>
-                <ul class="nav navbar-right panel_toolbox">
-                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                  </li>
-
-                  <li><a class="close-link"><i class="fa fa-close"></i></a>
-                  </li>
-                </ul>
-                <div class="clearfix"></div>
-              </div>
-              <div class="x_content">
-
-                <div id="container2" style="min-width:400px;height:1000px"></div>
+                <div id="container" style="left:40px;min-width:600px;height:1000px"></div>
 
               </div>
             </div>
@@ -214,6 +218,22 @@
                         </tr>
                         </tbody>
                       </table>
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                          <th>实体</th>
+                          <th>PageRank</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in data2 %}
+                        <tr>
+                          <td>{{i.name}}</td>
+                          <td>{{i.pagerank}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
                       <table class="table table-bordered">
                         <thead>
                         <tr>
@@ -232,6 +252,7 @@
                         {% endfor %}
                         </tbody>
                       </table>
+
 
                     </div>
                   </div>
@@ -263,7 +284,7 @@
     <script src="{% static 'vendors/fastclick/lib/fastclick.js' %}"></script>
     <!-- NProgress -->
     <script src="{% static 'vendors/nprogress/nprogress.js' %}"></script>
-    
+
     <!-- Custom Theme Scripts -->
     <script src="{% static 'js/custom.min.js' %}"></script>
     <!--<script src="https://img.hcharts.cn/highcharts/highcharts.js"></script>-->
@@ -378,143 +399,126 @@
 
     </script>
     <script>
-
-
-    init();
-
-    function init() {
-        //init data
-        var json = {{ graph | safe }};
-        //end
-        var infovis = document.getElementById('infovis');
-        var w = infovis.offsetWidth - 50, h = infovis.offsetHeight - 50;
-        //console.log(w, h);
-
-        //init Hypertree
-        var ht = new $jit.Hypertree({
-            //id of the visualization container
-            injectInto: 'infovis',
-            //canvas width and height
-            width: w,
-            height: h,
-            //Change node and edge styles such as
-            //color, width and dimensions.
-            Node: {
-                dim: 9,
-                color: "#1a487a"
-            },
-            Edge: {
-                lineWidth: 2,
-                color: "#8cb6bf"
-            },
-
-        //Attach event handlers and add text to the
-        //labels. This method is only triggered on label
-        //creation
-        onCreateLabel: function (domElement, node) {
-            domElement.innerHTML = node.name;
-            $jit.util.addEvent(domElement, 'click', function () {
-                ht.onClick(node.id, {
-                    onComplete: function () {
-                        ht.controller.onComplete();
-                    }
-                });
-            });
-        },
-        //Change node styles when labels are placed
-        //or moved.
-        onPlaceLabel: function (domElement, node) {
-            var style = domElement.style;
-            style.display = '';
-            style.cursor = 'pointer';
-            if (node._depth === 0) {
-                style.fontSize = "2.0em";
-                style.color = "#101010";
-
-            } else if (node._depth === 2 || node._depth === 1) {
-                style.fontSize = "0.7em";
-                style.color = "#555";
-
-            } else {
-                style.display = 'none';
-            }
-
-            var left = parseInt(style.left);
-            var w = domElement.offsetWidth;
-            style.left = (left - w / 2) + 'px';
-        },
-
-
-                    });
-        //load JSON data.
-        ht.loadJSON(json);
-        //compute positions and plot.
-        ht.refresh();
-        //end
-        ht.controller.onComplete();
-    }
-
-    var dom2 = document.getElementById("container2");
-    var myChart2 = echarts.init(dom2);
-    var app2 = {};
+var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    //var app = {{ data | safe }};
+    //console.log(app);
+    var graph = {{ graph | safe }};
+    console.log(typeof (graph));
     option = null;
-    var d = {{ graph2 | safe }};
-    console.log(typeof(d));
-    option = {
-        visualMap: {
-            type: 'continuous',
-            min: 0,
-            max: 10,
-            inRange: {
-                color: ['#2D5F73', '#538EA6', '#F2D1B3', '#F2B8A2', '#F28C8C']
-            }
-        },
-        series: {
-            type: 'sunburst',
-            data: d['result'],
-            radius: ['10%', '95%'],
-            label: {
-                rotate: 'radial'
-            }
+    myChart.showLoading();
+
+    //console.log("a")
+    myChart.hideLoading();
+    //console.log("h")
+
+    //console.log("here")
+    //console.log(graph);
+    var categories = [];
+    for (var i = 0; i < 3; i++) {
+        if (i===0) {
+            categories[i] = {
+                name: '起点/终点'
+            };
         }
+        else {
+            categories[i] = {
+                name: '跳数' + i
+            };
+        }
+    }
+    graph.nodes.forEach(function (node) {
+
+        node.itemStyle = null;
+        //node.value = node.symbolSize;
+        //node.symbolSize /= 1.5;
+        node.label = {
+            normal: {
+                show: true
+            }
+        };
+
+        //node.category = node.category;
+        // Use random x, y
+        //node.x = node.y = null;
+        node.draggable = true;
+        console.log(node);
+    });
+    option = {
+        title: {
+            text: '',
+            subtext: '',
+            top: 'bottom',
+            left: 'right'
+        },
+        tooltip: {},
+        legend: [{
+            // selectedMode: 'single',
+            data: categories.map(function (a) {
+                return a.name;
+            })
+        }],
+        animationDuration: 1500,
+        animationEasingUpdate: 'quinticInOut',
+        series : [
+            {
+                name: '',
+                type: 'graph',
+                layout: 'force',
+                data: graph.nodes,
+                links: graph.links,
+                categories: categories,
+                roam: true,
+                focusNodeAdjacency: true,
+                itemStyle: {
+                    normal: {
+                        borderColor: '#fff',
+                        borderWidth: 1,
+                        shadowBlur: 10,
+                        shadowColor: 'rgba(0, 0, 0, 0.3)'
+                    }
+                },
+                label: {
+                    normal: {
+                        show: true
+                    }
+
+                },
+                lineStyle: {
+                    color: 'source',
+                    curveness: 0.3
+                },
+                emphasis: {
+                    lineStyle: {
+                        width: 10
+                    }
+                },
+                force: {
+                    repulsion: 200
+                }
+            }
+        ]
     };
+
+    myChart.setOption(option);
     function eConsole(param) {
         if (typeof param.seriesIndex === 'undefined') {
             return;
         }
         if (param.type === 'click') {
             everyClick(param); // 对应触发事件
-        }
+            }
     }
-    myChart2.on("click", eConsole);
+    myChart.on("click", eConsole);
     function everyClick(param){
-        console.log(param.name);
-        $.get("/search2",{'name':param.name}, function(ret){
-            console.log(typeof(ret));
-            option = {
-                visualMap: {
-                    type: 'continuous',
-                    min: 0,
-                    max: 10,
-                    inRange: {
-                        color: ['#2D5F73', '#538EA6', '#F2D1B3', '#F2B8A2', '#F28C8C']
-                    }
-                },
-                series: {
-                    type: 'sunburst',
-                    data: ret['result'],
-                    radius: ['10%', '95%'],
-                    label: {
-                        rotate: 'radial'
-                    }
-                }
-            };
-            myChart2.setOption(option, true);
+        console.log(param.data.category);
+        $.get("/add/",{'name':param.name}, function(ret){
+            $('#result').html(ret)
         })
     }
 
     if (option && typeof option === "object") {
-        myChart2.setOption(option, true);
+        myChart.setOption(option, true);
     }
 
     </script>

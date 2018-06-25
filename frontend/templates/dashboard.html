@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      {% load static %}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>分类总览 </title>
+
+    <!-- Bootstrap -->
+    <link href="{% static 'vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="{% static 'vendors/font-awesome/css/font-awesome.min.css'%}" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="{% static 'vendors/nprogress/nprogress.css' %}" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="{% static 'css/Hypertree.css' %}" rel="stylesheet">
+    <link href="{% static 'css/custom.min.css' %}" rel="stylesheet">
+  </head>
+
+  <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col menu_fixed">
+          <div class="left_col scroll-view">
+            <div class="navbar nav_title" style="border: 0;">
+              <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span> Wiki Map </span></a>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <br />
+
+            <!-- sidebar menu -->
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                <div class="menu_section">
+                    <ul class="nav side-menu">
+                        <li><a href="/dashboard"><i class="fa fa-home"></i> Dashboard </a></li>
+                        <li><a><i class="fa fa-edit"></i> 查询 <span class="fa fa-chevron-down"></span></a>
+                            <ul class="nav child_menu">
+                                <li><a href="/search">查询实体</a></li>
+                                <li><a href="/searchbytwoentities">查询实体间关系</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/ETL"><i class="fa fa-archive"></i> ETL </a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main" >
+          <div class="">
+            <div class="page-title">
+              <div class="title_left">
+                <h3>&nbsp;&nbsp;&nbsp;分类总览</h3>
+                <br/>
+              </div>
+            </div>
+
+
+            <div class="x_panel">
+              <div class="x_title">
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                    <ul class="dropdown-menu" role="menu">
+                      <li><a href="#">Settings 1</a>
+                      </li>
+                      <li><a href="#">Settings 2</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+
+                <div id="container" style="left:40px;min-width:600px;height:1000px"></div>
+
+              </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="row" >
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+
+                  <div class="x_content">
+
+                    <div class="x_title">
+                      <h2>实体列表</h2>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                          <th>所属子类</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                          <td id="subclass"></td>
+                        </tr>
+                        </tbody>
+                      </table>
+                      <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                          <th>实体名称</th>
+                        </tr>
+                        </thead>
+                        <tbody id="entityTable">
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+        <!-- /page content -->
+        <!-- footer content -->
+        <footer>
+          <div class="pull-right">
+            喵喵电影 - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    {% load static %}
+    <script src="{% static 'vendors/jquery/dist/jquery.min.js' %}"></script>
+    <!-- Bootstrap -->
+    <script src="{% static 'vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static 'vendors/fastclick/lib/fastclick.js' %}"></script>
+    <!-- NProgress -->
+    <script src="{% static 'vendors/nprogress/nprogress.js' %}"></script>
+
+    <!-- Custom Theme Scripts -->
+    <script src="{% static 'js/custom.min.js' %}"></script>
+    <!--<script src="https://img.hcharts.cn/highcharts/highcharts.js"></script>-->
+    <!--<script src="https://img.hcharts.cn/highcharts/modules/exporting.js"></script>-->
+    <!--<script src="https://img.hcharts.cn/highcharts/modules/oldie.js"></script>-->
+    <!--<script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>-->
+    <script src="{% static 'vendors/angular/angular-route.js' %}"></script>
+    <script src="{% static 'vendors/angular/angular.js' %}"></script>
+    <script src="{% static 'js/echarts.min.js' %}"></script>
+    <script src="{% static 'js/jit.js' %}"></script>
+    <!--<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+    <script type="text/javascript"></script>-->
+    <script>
+    var dom = document.getElementById("container");
+var myChart = echarts.init(dom);
+var app = {};
+option = null;
+data = {"children": [{"name": "owl:Thing", "children": [{"name": "Work", "children": [{"name": "TelevisionShow", "children": []}, {"name": "MusicalWork", "children": [{"name": "Album", "children": []}]}, {"name": "WrittenWork", "children": []}, {"name": "Film", "children": []}, {"name": "Cartoon", "children": []}, {"name": "Artwork", "children": []}]}, {"name": "Place", "children": [{"name": "ArchitecturalStructure", "children": []}, {"name": "PopulatedPlace", "children": [{"name": "Island", "children": []}]}]}, {"name": "Agent", "children": [{"name": "Organisation", "children": [{"name": "MilitaryUnit", "children": []}, {"name": "EducationalInstitution", "children": [{"name": "School", "children": []}, {"name": "University", "children": []}]}, {"name": "PoliticalParty", "children": []}, {"name": "Company", "children": [{"name": "PublicTransitSystem", "children": [{"name": "Airline", "children": []}]}]}, {"name": "SportsTeam", "children": []}, {"name": "Broadcaster", "children": []}, {"name": "Legislature", "children": []}]}, {"name": "Person", "children": [{"name": "Astronaut", "children": []}, {"name": "Monarch", "children": []}, {"name": "Athlete", "children": [{"name": "Wrestler", "children": []}]}, {"name": "Artist", "children": []}]}, {"name": "FictionalCharacter", "children": [{"name": "MythologicalFigure", "children": []}]}]}, {"name": "MeanOfTransportation", "children": [{"name": "Ship", "children": []}, {"name": "Automobile", "children": []}, {"name": "Rocket", "children": []}]}, {"name": "PersonFunction", "children": []}, {"name": "Food", "children": []}, {"name": "Activity", "children": []}, {"name": "Species", "children": []}, {"name": "AnatomicalStructure", "children": [{"name": "Brain", "children": []}, {"name": "Nerve", "children": []}, {"name": "Artery", "children": []}]}]}, {"name": "Event", "children": []}], "name": "overview"}
+    myChart.hideLoading();
+    console.log(data);
+
+{#    echarts.util.each(data.children, function (datum, index) {#}
+{#        index % 2 === 0 && (datum.collapsed = false);#}
+{#    });#}
+
+    myChart.setOption(option = {
+        tooltip: {
+            trigger: 'item',
+            triggerOn: 'mousemove'
+        },
+        series: [
+            {
+                type: 'tree',
+
+                data: [data],
+
+                top: '1%',
+                left: '7%',
+                bottom: '1%',
+                right: '20%',
+
+                symbolSize: 7,
+
+                label: {
+                    normal: {
+                        position: 'left',
+                        verticalAlign: 'middle',
+                        align: 'right',
+                        fontSize: 9
+                    }
+                },
+
+                leaves: {
+                    label: {
+                        normal: {
+                            position: 'right',
+                            verticalAlign: 'middle',
+                            align: 'left'
+                        }
+                    }
+                },
+
+                expandAndCollapse: true,
+                animationDuration: 550,
+                animationDurationUpdate: 750
+            }
+        ]
+    });
+
+    myChart.setOption(option);
+    function eConsole(param) {
+        if (typeof param.seriesIndex === 'undefined') {
+            return;
+        }
+        if (param.type === 'click') {
+            everyClick(param); // 对应触发事件
+            }
+    }
+    myChart.on("click", eConsole);
+    function everyClick(param){
+        console.log(param.name);
+        $.get("/search4",{'name':param.name}, function(ret){
+            console.log(ret)
+
+            document.getElementById("subclass").innerHTML = param.name;
+            document.getElementById("entityTable").innerHTML = '';
+            for (var i=0;i<ret[param.name].length;i++){
+                 $("#entityTable").append("<tr><td >"
+                         + "<a href=\"/search1?entity1="+ ret[param.name][i] +"&entity2=&submit=提交\" id=\""+ ret[param.name][i] +"\">"
+                     + ret[param.name][i]+"</a></td></tr>\n")
+            }
+        })
+    }
+
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+
+
+
+    </script>
+
+  </body>
+</html>

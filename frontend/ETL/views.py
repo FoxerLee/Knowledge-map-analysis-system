@@ -5,7 +5,7 @@ import os
 
 
 def entity(request):
-    graph = Graph("bolt://localhost:7687", username="neo4j", password="123456")
+    graph = Graph("bolt://10.60.42.201:7687", username="neo4j", password="123456")
     if request.method == "POST":
         file_obj = request.FILES.get("up_file")
         print(file_obj.name)
@@ -15,16 +15,24 @@ def entity(request):
         for i in file_obj.chunks():
             string += str(i, encoding="utf-8")
 
-        entities = string.split("\r\n")
-        for entity in entities:
-            node = Node(name=entity)
-            graph.create(node)
+        datas = string.split(".\n")
+        for d in datas:
+            d = str(d).split(' ')
+            tmp = []
+            for item in d:
+                item = item.split('/')
+                tmp.append(item[-1][:-1])
+
+            node1 = Node(name=tmp[0])
+            node2 = Node(name=tmp[2])
+            prop = Relationship(node1, tmp[1], node2)
+            graph.create(prop)
 
     return render(request, 'ETL.html')
 
 
 def relation(request):
-    graph = Graph("bolt://localhost:7687", username="neo4j", password="123456")
+    graph = Graph("bolt://10.60.42.201:7687", username="neo4j", password="123456")
     if request.method == "POST":
         file_obj = request.FILES.get("up_file")
         print(file_obj.name)
